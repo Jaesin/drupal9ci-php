@@ -1,7 +1,7 @@
 FROM php:8.0.9-fpm-alpine
 
 ## Add PHP Extensions ##
-RUN apk add --no-cache zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev libmcrypt-dev icu-dev \
+RUN apk add --no-cache zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev libmcrypt-dev icu-dev git \
   && docker-php-ext-configure opcache --enable-opcache \
   && docker-php-ext-configure gd --with-freetype --with-jpeg \
   && yes '' | pecl install mcrypt redis apcu xdebug ast \
@@ -23,3 +23,8 @@ COPY --from=phpstan/phpstan:0.12.89 /composer/vendor/bin/phpstan.phar /usr/bin/p
 
 ## Add Psalm ##
 COPY --from=jaesin/psalm-builder:latest /usr/local/bin/psalm /usr/local/bin/psalm
+
+## Add PHPCS ##
+COPY --from=cytopia/phpcs:latest /usr/bin/phpcs /usr/local/bin/phpcs
+RUN composer global require drupal/coder \
+  && /usr/local/bin/phpcs --config-set installed_paths /root/.composer/vendor/drupal/coder/coder_sniffer
