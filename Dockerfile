@@ -1,11 +1,14 @@
-FROM php:8.0.9-fpm-alpine
+FROM php:8.0.16-fpm-alpine
+
+## Add additional tools ##
+RUN apk add --no-cache git rsync mariadb-client postgresql-client
 
 ## Add PHP Extensions ##
-RUN apk add --no-cache zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev libmcrypt-dev icu-dev git \
+RUN apk add --no-cache zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev libmcrypt-dev icu-dev libpq-dev \
   && docker-php-ext-configure opcache --enable-opcache \
   && docker-php-ext-configure gd --with-freetype --with-jpeg \
   && yes '' | pecl install mcrypt redis apcu xdebug ast \
-  && docker-php-ext-install -j$(nproc) gd intl opcache pdo pdo_mysql \
+  && docker-php-ext-install -j$(nproc) gd intl opcache pdo pdo_mysql pdo_pgsql \
   && docker-php-ext-enable mcrypt redis apcu xdebug ast \
   && mkdir -p $PHP_INI_DIR/mods-available/ \
   && mv $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini $PHP_INI_DIR/mods-available/ \
