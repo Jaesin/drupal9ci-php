@@ -19,7 +19,7 @@ RUN apk add --no-cache zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev libmcr
 RUN ln -s php.ini-development $PHP_INI_DIR/php.ini
 
 ## Add Composer ##
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 
 ## Add phpstan ##
 COPY --from=phpstan/phpstan:0.12.89 /composer/vendor/bin/phpstan.phar /usr/bin/phpstan
