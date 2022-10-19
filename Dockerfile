@@ -1,7 +1,7 @@
 FROM php:8.1.11-fpm-alpine
 
 ## Add additional tools ##
-RUN apk add --no-cache git rsync mariadb-client postgresql-client
+RUN apk add --no-cache git patch su-exec rsync mariadb-client postgresql-client
 
 ## Add PHP Extensions ##
 RUN apk add --no-cache zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev libmcrypt-dev icu-dev libpq-dev
