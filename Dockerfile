@@ -29,13 +29,20 @@ RUN ln -s php.ini-development $PHP_INI_DIR/php.ini
 COPY --from=composer:2.4.3 /usr/bin/composer /usr/bin/composer
 
 ## Add phpstan ##
-COPY --from=phpstan/phpstan:0.12.89 /composer/vendor/bin/phpstan.phar /usr/bin/phpstan
+RUN wget -O /usr/local/bin/phpstan https://github.com/phpstan/phpstan/releases/download/1.8.10/phpstan.phar \
+    && chmod 755 /usr/local/bin/phpstan \
+    && echo "34c65d4aa823b53b7d500ddeca7704f4da3672e8  /usr/local/bin/phpstan" | sha1sum -c - \
+    && phpstan --version
 
 ## Add Psalm ##
-COPY --from=jaesin/psalm-builder:latest /usr/local/bin/psalm /usr/local/bin/psalm
+COPY --from=jaesin/psalm-builder:4.29.0 /usr/local/bin/psalm /usr/local/bin/psalm
 
 ## Add PHPCS ##
-COPY --from=cytopia/phpcs:latest /usr/bin/phpcs /usr/local/bin/phpcs
+RUN wget -O /usr/local/bin/phpcs https://github.com/squizlabs/PHP_CodeSniffer/releases/download/3.7.1/phpcs.phar \
+    && chmod 755 /usr/local/bin/phpcs \
+    && phpcs --version \
+    && echo "7323dd2945e661807b283a7468d6826418c72dd7  /usr/local/bin/phpcs" | sha1sum -c -
+
 RUN composer global config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true \
   && composer global require drupal/coder \
   && /usr/local/bin/phpcs --config-set installed_paths /root/.composer/vendor/drupal/coder/coder_sniffer
